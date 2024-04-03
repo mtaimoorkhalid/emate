@@ -1,8 +1,8 @@
 import SeekerModel from "../../model/seeker/index.js";
 import MentorModel from "../../model/mentor/index.js";
 
-const FormController = {
-  submitForm: async (req, res) => {
+const AdditionalInfoController = {
+  addInfo: async (req, res) => {
     try {
       const data = req.body;
       console.log(
@@ -18,25 +18,29 @@ const FormController = {
           where: { UserId: req.user.id },
         });
         if (seekerForm) {
-          return res.status(403).json({ message: "Form Already Submitted!" });
+          return res.status(403).json({
+            message: "Info Already Submitted go for edit if you want to!",
+          });
         }
         await SeekerModel.create({
           education: data.education,
           UserId: req.user.id,
         });
-        return res.json({ message: "Seeker Form Submitted Sucessfully!!" });
+        return res.json({ message: "Seeker Info Submitted Sucessfully!!" });
       } else if (req.user.role === "mentor") {
         const mentorForm = await MentorModel.findOne({
           where: { UserId: req.user.id },
         });
         if (mentorForm) {
-          return res.status(403).json({ message: "Form Already Submitted!" });
+          return res.status(403).json({
+            message: "Info Already Submitted go for edit if you want to!",
+          });
         }
         await MentorModel.create({
           UserId: req.user.id,
           expertise: data.expertise,
         });
-        return res.json({ message: "Mentor Form Submitted Sucessfully!!" });
+        return res.json({ message: "Mentor Info Submitted Sucessfully!!" });
       } else {
         return res.json({ message: "Role is undefined!!!" });
       }
@@ -46,4 +50,4 @@ const FormController = {
     }
   },
 };
-export default FormController;
+export default AdditionalInfoController;

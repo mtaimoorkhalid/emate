@@ -10,15 +10,34 @@ const ConnectionModel = sequelize.define(
   { timestamps: false }
 );
 
-ConnectionModel.belongsTo(UserModel, { as: "seeker" });
-ConnectionModel.belongsTo(UserModel, { as: "mentor" });
+// ConnectionModel.belongsTo(UserModel, { as: "sender", foreignKey: "senderId" });
+// ConnectionModel.belongsTo(UserModel, {
+//   as: "receiver",
+//   foreignKey: "receiverId",
+// });
 
-UserModel.hasMany(ConnectionModel, {
-  as: "connections",
-  foreignKey: "seekerId",
+// UserModel.belongsToMany(UserModel, {
+//   through: ConnectionModel,
+//   as: "connections",
+//   foreignKey: "senderId",
+// });
+// UserModel.belongsToMany(UserModel, {
+//   through: ConnectionModel,
+//   as: "receivedConnections",
+//   foreignKey: "receiverId",
+// });
+UserModel.belongsToMany(UserModel, {
+  through: ConnectionModel,
+  as: "senderConnections",
+  foreignKey: "senderId",
 });
-UserModel.hasMany(ConnectionModel, {
-  as: "receivedConnections",
-  foreignKey: "mentorId",
+UserModel.belongsToMany(UserModel, {
+  through: ConnectionModel,
+  as: "receiverConnections",
+  foreignKey: "receiverId",
 });
+
+ConnectionModel.belongsTo(UserModel, { as: "sender" });
+ConnectionModel.belongsTo(UserModel, { as: "receiver" });
+
 export default ConnectionModel;

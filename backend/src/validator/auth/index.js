@@ -13,10 +13,11 @@ const AuthValidator = {
       password: Joi.string()
         .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
         .required(),
-      confirm_password: Joi.ref("password"),
+      // confirm_password: Joi.ref("password"),
       role: Joi.string().min(6).max(6).required(),
       phone: Joi.string().min(11).max(15).required(),
       address: Joi.string().min(3).max(100).required(),
+      about: Joi.string().min(3).max(500),
     });
     const response = schema.validate(req.body);
     if (response.error) {

@@ -5,7 +5,7 @@ import UserModel from "../user/index.js";
 const SeekerModel = sequelize.define(
   "Seeker",
   {
-    education: { type: DataTypes.STRING, allowNull: false },
+    education: { type: DataTypes.STRING },
   },
   { timestamps: false }
 );

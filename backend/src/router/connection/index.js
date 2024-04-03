@@ -5,12 +5,12 @@ import AuthenticationMiddleware from "../../middleware/authorization.js";
 const ConnectionRouter = Router();
 
 ConnectionRouter.post(
-  "/send-request/:mentorId",
+  "/send-request/:receiverId",
   AuthenticationMiddleware,
   ConnectionController.sendRequest
 );
 ConnectionRouter.put(
-  "/accept-request/:seekerId",
+  "/accept-request/:senderId",
   AuthenticationMiddleware,
   ConnectionController.acceptRequest
 );
@@ -18,5 +18,10 @@ ConnectionRouter.delete(
   "/delete-connection/:mentorId",
   AuthenticationMiddleware,
   ConnectionController.removeConnection
+);
+ConnectionRouter.get(
+  "/get-connectionRequests",
+  AuthenticationMiddleware,
+  ConnectionController.showConnectionRequests
 );
 export default ConnectionRouter;

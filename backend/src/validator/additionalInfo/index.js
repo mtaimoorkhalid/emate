@@ -1,7 +1,7 @@
 import Joi from "joi";
 
-const FormValidator = {
-  submitForm: (req, res, next) => {
+const AdditionalInfoValidator = {
+  addInfo: (req, res, next) => {
     const schema = Joi.object({
       expertise: Joi.string(),
       education: Joi.string(),
@@ -15,4 +15,4 @@ const FormValidator = {
     next();
   },
 };
-export default FormValidator;
+export default AdditionalInfoValidator;

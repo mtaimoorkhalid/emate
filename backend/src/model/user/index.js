@@ -10,6 +10,7 @@ const UserModel = sequelize.define(
     phone: { type: DataTypes.STRING() },
     address: { type: DataTypes.STRING() },
     profilePicture: { type: DataTypes.STRING() },
+    about: { type: DataTypes.TEXT },
   },
   { timestamps: false }
 );

@@ -5,7 +5,7 @@ import UserModel from "../user/index.js";
 const MentorModel = sequelize.define(
   "Mentor",
   {
-    expertise: { type: DataTypes.STRING, allowNull: false },
+    expertise: { type: DataTypes.STRING },
   },
   { timestamps: false }
 );

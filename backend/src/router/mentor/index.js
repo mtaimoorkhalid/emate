@@ -13,4 +13,9 @@ MentorRouter.get(
   AuthenticationMiddleware,
   MentorController.showConnections
 );
+MentorRouter.put(
+  "/mentor-editProfile",
+  AuthenticationMiddleware,
+  MentorController.editProfile
+);
 export default MentorRouter;

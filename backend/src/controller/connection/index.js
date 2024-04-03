@@ -1,4 +1,5 @@
 import ConnectionModel from "../../model/connection/index.js";
+import UserModel from "../../model/user/index.js";
 
 const ConnectionController = {
   sendRequest: async (req, res) => {
@@ -10,14 +11,20 @@ const ConnectionController = {
       "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     );
     try {
-      if (req.user.role !== "seeker") {
+      // if (req.user.role !== "seeker") {
+      //   return res
+      //     .status(403)
+      //     .json({ message: "Mentor cannot send connection request" });
+      // }
+      const { receiverId } = req.params;
+      if (req.user.id === receiverId) {
         return res
           .status(403)
-          .json({ message: "Mentor cannot send connection request" });
+          .json({ message: "You cannot send request to yourself" });
       }
-      const { mentorId } = req.params;
+
       const connection = await ConnectionModel.findOne({
-        where: { seekerId: req.user.id, mentorId },
+        where: { senderId: req.user.id, receiverId },
       });
       if (connection) {
         return res
@@ -27,8 +34,8 @@ const ConnectionController = {
 
       await ConnectionModel.create({
         status: "pending",
-        mentorId,
-        seekerId: req.user.id,
+        receiverId,
+        senderId: req.user.id,
       });
       return res.json({ message: "Connection request successfully sent!!!" });
     } catch (error) {
@@ -38,14 +45,14 @@ const ConnectionController = {
   },
   acceptRequest: async (req, res) => {
     try {
-      if (req.user.role !== "mentor") {
-        return res
-          .status(403)
-          .json({ message: "Seeker cannot accept connection request" });
-      }
-      const { seekerId } = req.params;
+      // if (req.user.role !== "mentor") {
+      //   return res
+      //     .status(403)
+      //     .json({ message: "Seeker cannot accept connection request" });
+      // }
+      const { senderId } = req.params;
       const connection = await ConnectionModel.findOne({
-        where: { mentorId: req.user.id, seekerId },
+        where: { receiverId: req.user.id, senderId },
       });
       if (!connection) {
         return res
@@ -55,7 +62,7 @@ const ConnectionController = {
       connection.status = "accepted";
       await connection.save();
       return res.json({
-        message: `Connection request accepted. You are now connected to user with ID: ${seekerId}`,
+        message: `Connection request accepted. You are now connected to user with ID: ${senderId}`,
       });
     } catch (error) {
       console.error("Error in acceptRequest:", error);
@@ -64,9 +71,9 @@ const ConnectionController = {
   },
   removeConnection: async (req, res) => {
     try {
-      const { mentorId } = req.params;
+      const { receiverId } = req.params;
       const connection = await ConnectionModel.findOne({
-        where: { mentorId, seekerId: req.user.id },
+        where: { receiverId, senderId: req.user.id },
       });
       if (!connection) {
         return res
@@ -75,6 +82,27 @@ const ConnectionController = {
       }
       await connection.destroy();
       return res.json({ message: "Connection removed!!!" });
+    } catch (error) {
+      console.error("Error in acceptRequest:", error);
+      return res.status(500).json({ message: "Server Error" });
+    }
+  },
+  showConnectionRequests: async (req, res) => {
+    try {
+      const connectionRequests = await ConnectionModel.findAll({
+        where: { receiverId: req.user.id, status: "pending" },
+        include: [
+          {
+            model: UserModel,
+            as: "sender",
+            attributes: ["name"],
+          },
+        ],
+      });
+      if (!connectionRequests) {
+        return res.status(404).json({ message: "No Connection Request found" });
+      }
+      return res.json({ connectionRequests });
     } catch (error) {
       console.error("Error in acceptRequest:", error);
       return res.status(500).json({ message: "Server Error" });

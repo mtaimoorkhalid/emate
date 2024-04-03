@@ -3,20 +3,21 @@ import UserModel from "../../model/user/index.js";
 import Jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
+import MentorModel from "../../model/mentor/index.js";
+import SeekerModel from "../../model/seeker/index.js";
 
 const AuthController = {
   register: async (req, res) => {
     try {
-      const { name, email, password, confirm_password, role, phone, address } =
-        req.body;
+      const { name, email, password, role, phone, address } = req.body;
       const profilePicture = req.file ? req.file.path : null;
       const user = await UserModel.findOne({ where: { email } });
       if (user) {
         return res.json({ message: "This email already exist!" });
       }
-      if (password !== confirm_password) {
-        return res.json({ message: "Password did not match!" });
-      }
+      // if (password !== confirm_password) {
+      //   return res.json({ message: "Password did not match!" });
+      // }
       const hpassword = await bcrypt.hash(password, 10);
       await UserModel.create({
         name,
@@ -27,6 +28,13 @@ const AuthController = {
         address,
         profilePicture,
       });
+      const createdUser = await UserModel.findOne({ where: { email } });
+      if (createdUser.role === "mentor") {
+        await MentorModel.create({ UserId: createdUser.id });
+        console.log(name, email, hpassword, role, phone, address);
+        return res.json({ message: "User Created" });
+      }
+      await SeekerModel.create({ UserId: createdUser.id });
       console.log(name, email, hpassword, role, phone, address);
       return res.json({ message: "User Created" });
     } catch (error) {

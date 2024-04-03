@@ -7,7 +7,7 @@ import { Server } from "socket.io";
 import AllRouters from "./router/index.js";
 import { connectDb } from "./db/config.js";
 import initDb from "./db/init.js";
-import cors from "cors"; // Import cors middleware
+import cors from "cors";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,6 +27,12 @@ app.use(
 );
 
 app.use(AllRouters);
+connectDb();
+initDb();
+
+app.listen(3333, () => {
+  console.log("Server Started");
+});
 
 const frontendBuildPath = resolve(__dirname, "../frontend/dist");
 app.use(express.static(frontendBuildPath));
@@ -38,14 +44,8 @@ app.get("*", (req, res) => {
 io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
 });
-connectDb();
-initDb();
 
-server.listen(3333, () => {
-  console.log(`Server running on port ${3333}`);
-});
-
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: "Internal Server Error" });
-});
+// app.use((err, req, res, next) => {
+//   console.error(err.stack);
+//   res.status(500).json({ message: "Internal Server Error" });
+// });

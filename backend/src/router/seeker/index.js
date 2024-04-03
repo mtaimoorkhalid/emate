@@ -8,4 +8,15 @@ SeekerRouter.get(
   AuthenticationMiddleware,
   SeekerController.showProfile
 );
+
+SeekerRouter.get(
+  "/seeker-connections",
+  AuthenticationMiddleware,
+  SeekerController.showConnections
+);
+SeekerRouter.put(
+  "/seeker-editProfile",
+  AuthenticationMiddleware,
+  SeekerController.editProfile
+);
 export default SeekerRouter;
