@@ -7,7 +7,7 @@ import { Server } from "socket.io";
 import AllRouters from "./router/index.js";
 import { connectDb } from "./db/config.js";
 import initDb from "./db/init.js";
-import cors from "cors"; // Import cors middleware
+import cors from "cors";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
